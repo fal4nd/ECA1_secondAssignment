@@ -3,3 +3,4 @@ To test the program, run:
     make all
     make run
   </pre>
+OpenCL drivers are required.
