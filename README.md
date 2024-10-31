@@ -1,5 +1,5 @@
 To test the program, run:
-  \'''
-  make all
-  make run 
-  \'''
+  <pre>
+    make all
+    make run
+  </pre>
