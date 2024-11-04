@@ -92,6 +92,7 @@ int write_matrix(const char *matrix_out_filename, int64_t* output_matrix){
 }
 
 void apply_convolution(int32_t* input_matrix, int64_t* output_matrix, int32_t* kernel_matrix) {
+    //Initialization of OpenCL environment
     cl_int err;
     cl_ulong time_start;
     cl_ulong time_end;
@@ -121,6 +122,7 @@ void apply_convolution(int32_t* input_matrix, int64_t* output_matrix, int32_t* k
 
     cl_kernel kernel = clCreateKernel(program, "convolution", NULL);
 
+    //Memory Transfers and argument setup
     cl_event kernel_event;
 
     cl_mem startingMatrixBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(int32_t) * MATRIX_SIZE * MATRIX_SIZE, NULL, NULL);
@@ -156,9 +158,11 @@ void apply_convolution(int32_t* input_matrix, int64_t* output_matrix, int32_t* k
     clSetKernelArg(kernel, 2, sizeof(cl_mem), &kernelBuffer);           // Third argument: kernel array
     clSetKernelArg(kernel, 3, sizeof(int32_t), &matrix_size);           // Fourth argument: size of convoluted matrix
 
+    //Work size setup
     size_t globalWorkSize[1] = { CONV_MATRIX_SIZE*CONV_MATRIX_SIZE };
-    size_t localWorkSize[1] = { 121 };
+    size_t localWorkSize[1] = { 242 };
 
+    //Execution and termination
     err = clEnqueueNDRangeKernel(queue, kernel, 1, NULL, globalWorkSize, localWorkSize, 0, NULL, &kernel_event);
     if (err != CL_SUCCESS) {
         printf("Error in clEnqueueNDRangeKernel: %d\n", err);
