@@ -1,6 +1,6 @@
 __kernel void convolution(global int* input, global long* output,
     constant int* kernel_matrix, int size){
-
+    //Initialization and setup
     const long INT64_MAX = 9223372036854775807;
     const long INT64_MIN = -9223372036854775808;
     const int element = get_global_id(0);
@@ -9,6 +9,7 @@ __kernel void convolution(global int* input, global long* output,
     const int row_size = size + 2;
     long sum = 0;
 
+    //Multiplication between starting and kernel matrix
     // we store values of the input in a vector
     long16 input_vector = (long16)(
         (long)input[(row - 1) * row_size + col - 1],
@@ -40,6 +41,7 @@ __kernel void convolution(global int* input, global long* output,
     // Perform element-wise multiplication and store it in product_vector
     long16 product_vector = input_vector * kernel_vector;
 
+    //Sum and overflow detection
     int overflow_positive = 0;
     int overflow_negative = 0;
 
@@ -56,5 +58,6 @@ __kernel void convolution(global int* input, global long* output,
     sum = overflow_positive ? INT64_MAX : sum;
     sum = overflow_negative ? INT64_MIN : sum;
 
+    //Write and store the result of the convolution
     output[element] = sum;
 }
